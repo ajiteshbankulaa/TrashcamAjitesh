@@ -1844,6 +1844,18 @@ html {
   font-size: var(--font-size);
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+#root {
+  height: 100vh;
+  overflow: auto;
+}
+
 @property --tw-translate-x {
   syntax: "*";
   inherits: false;

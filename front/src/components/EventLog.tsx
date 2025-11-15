@@ -12,7 +12,7 @@ interface EventLogProps {
   scrollHeight?: number;
 }
 
-export function EventLog({ events, scrollHeight = 1000 }: EventLogProps) {
+export function EventLog({ events, scrollHeight = 800 }: EventLogProps) {
   const getEventIcon = (type: string) => {
     switch (type) {
       case "deposit":

@@ -130,7 +130,7 @@ export function Dashboard() {
             SMART TRASH MONITOR v1.0
           </h1>
         </div>
-        <StatusBar 
+        <StatusBar
           totalCans={totalCans}
           criticalCans={criticalCans}
           warningCans={warningCans}
@@ -142,8 +142,8 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
         <div className="lg:col-span-2">
           {trashCans.map((trashCan) => (
-            <TrashCanCard 
-              key={trashCan.id} 
+            <TrashCanCard
+              key={trashCan.id}
               data={trashCan}
               onUpdate={updateTrashCan}
               onReset={resetTrashCan}

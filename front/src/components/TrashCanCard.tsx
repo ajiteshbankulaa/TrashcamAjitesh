@@ -28,7 +28,8 @@ export function TrashCanCard({ data, onUpdate, onReset }: TrashCanCardProps) {
 
   return (
     <div
-      className="bg-[#1a1a3e] border-4 p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.5)] transition-all hover:-translate-y-1"
+      //  transition-all hover:-translate-y-1
+      className="bg-[#1a1a3e] border-4 p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.5)]"
       style={{ borderColor }}
     >
       {/* Header */}
