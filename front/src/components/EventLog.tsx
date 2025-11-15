@@ -9,9 +9,10 @@ interface Event {
 
 interface EventLogProps {
   events: Event[];
+  scrollHeight?: number;
 }
 
-export function EventLog({ events }: EventLogProps) {
+export function EventLog({ events, scrollHeight = 1000 }: EventLogProps) {
   const getEventIcon = (type: string) => {
     switch (type) {
       case "deposit":
@@ -43,19 +44,18 @@ export function EventLog({ events }: EventLogProps) {
   };
 
   return (
-    <div className="bg-[#1a1a3e] border-4 border-[#50d070] p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] h-full">
+    <div className="bg-[#1a1a3e] border-4 border-[#50d070] p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)]">
       <div className="mb-4">
         <h2 className="text-[#50d070] tracking-wider" style={{ fontFamily: 'monospace', textShadow: '2px 2px 0px rgba(80,208,112,0.3)' }}>
           === EVENT LOG ===
         </h2>
       </div>
 
-      <ScrollArea className="h-[600px] pr-4">
+      <ScrollArea className="pr-4" style={{ height: scrollHeight }}>
         <div className="space-y-2">
           {events.map((event, index) => {
             const Icon = getEventIcon(event.type);
             const color = getEventColor(event.type);
-            
             return (
               <div
                 key={index}

@@ -52,10 +52,59 @@ export function Dashboard() {
         { timestamp: "14:12:03", type: "deposit", message: "Recyclable can detected" },
         { timestamp: "12:30:00", type: "empty", message: "Trash can emptied" },
         { timestamp: "12:15:22", type: "alert", message: "Fill level reached 75%" },
-        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" }
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
+        { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" },
       ]
     }
   ]);
+
+  const defaultTrashCanData: TrashCanData = {
+    id: "TC001",
+    name: "Main Entrance",
+    fillLevel: 45,
+    weight: 12.3,
+    lastEmptied: "2 hours ago",
+    status: "normal",
+    location: "Building A",
+    targetCategory: "recyclable",
+    categories: {
+      recyclable: 8,
+      organic: 3,
+      plastic: 12,
+      paper: 15,
+      general: 7
+    },
+    events: [
+      { timestamp: "14:23:45", type: "deposit", message: "Paper item detected" },
+      { timestamp: "14:18:32", type: "contamination", message: "Non-recyclable item detected" },
+      { timestamp: "14:15:10", type: "deposit", message: "Plastic bottle detected" },
+      { timestamp: "14:12:03", type: "deposit", message: "Recyclable can detected" },
+      { timestamp: "12:30:00", type: "empty", message: "Trash can emptied" },
+      { timestamp: "12:15:22", type: "alert", message: "Fill level reached 75%" },
+      { timestamp: "11:45:18", type: "deposit", message: "Organic waste detected" }
+    ]
+  };
+
+  const updateTrashCan = (updates: Partial<TrashCanData>) => {
+    setTrashCans([{ ...trashCans[0], ...updates }]);
+  };
+
+  const resetTrashCan = () => {
+    setTrashCans([defaultTrashCanData]);
+  };
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -93,7 +142,12 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
         <div className="lg:col-span-2">
           {trashCans.map((trashCan) => (
-            <TrashCanCard key={trashCan.id} data={trashCan} />
+            <TrashCanCard 
+              key={trashCan.id} 
+              data={trashCan}
+              onUpdate={updateTrashCan}
+              onReset={resetTrashCan}
+            />
           ))}
         </div>
         <div className="lg:col-span-1">

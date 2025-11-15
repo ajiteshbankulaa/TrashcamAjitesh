@@ -3,12 +3,15 @@ import { TrashCanData } from "./Dashboard";
 import { PixelProgressBar } from "./PixelProgressBar";
 import { CategoryBreakdown } from "./CategoryBreakdown";
 import { ContaminationTracker } from "./ContaminationTracker";
+import { ControlPanel } from "./ControlPanel";
 
 interface TrashCanCardProps {
   data: TrashCanData;
+  onUpdate: (id: string, fillLevel: number) => void;
+  onReset: (id: string) => void;
 }
 
-export function TrashCanCard({ data }: TrashCanCardProps) {
+export function TrashCanCard({ data, onUpdate, onReset }: TrashCanCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "critical":
@@ -24,16 +27,16 @@ export function TrashCanCard({ data }: TrashCanCardProps) {
   const borderColor = statusColor;
 
   return (
-    <div 
+    <div
       className="bg-[#1a1a3e] border-4 p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.5)] transition-all hover:-translate-y-1"
       style={{ borderColor }}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h2 
-            className="tracking-wider mb-1" 
-            style={{ 
+          <h2
+            className="tracking-wider mb-1"
+            style={{
               fontFamily: 'monospace',
               color: statusColor,
               textShadow: `2px 2px 0px ${statusColor}33`
@@ -58,9 +61,9 @@ export function TrashCanCard({ data }: TrashCanCardProps) {
           <span className="text-[#50d070]/80 tracking-wide" style={{ fontFamily: 'monospace' }}>
             FILL LEVEL
           </span>
-          <span 
-            className="tracking-wider" 
-            style={{ 
+          <span
+            className="tracking-wider"
+            style={{
               fontFamily: 'monospace',
               color: statusColor
             }}
@@ -107,13 +110,21 @@ export function TrashCanCard({ data }: TrashCanCardProps) {
       </div>
 
       {/* Contamination Tracker */}
-      <ContaminationTracker 
+      <ContaminationTracker
         targetCategory={data.targetCategory}
         categories={data.categories}
       />
 
       {/* Category Breakdown */}
       <CategoryBreakdown categories={data.categories} />
+
+      {/* Control Panel */}
+      <ControlPanel
+        data={data}
+        onUpdate={onUpdate}
+        onReset={onReset}
+      />
+
     </div>
   );
 }

@@ -27,13 +27,13 @@ export function CategoryBreakdown({ categories }: CategoryBreakdownProps) {
   };
 
   return (
-    <div className="bg-[#0f0f23] border-2 border-[#50d070]/30 p-4">
+    <div className="bg-[#0f0f23] border-2 border-[#50d070]/30 p-4 mb-4">
       <div className="mb-3">
         <span className="text-[#50d070] tracking-wider" style={{ fontFamily: 'monospace' }}>
           === TRASH CATEGORIES ===
         </span>
       </div>
-      
+
       <div className="space-y-2">
         {categoryConfig.map(({ key, label, icon: Icon, color }) => {
           const count = categories[key as keyof typeof categories];
@@ -42,8 +42,8 @@ export function CategoryBreakdown({ categories }: CategoryBreakdownProps) {
             <div key={key} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Icon className="w-4 h-4" style={{ color }} />
-                <span 
-                  className="tracking-wide" 
+                <span
+                  className="tracking-wide"
                   style={{ fontFamily: 'monospace', color: `${color}cc` }}
                 >
                   {label}
@@ -62,8 +62,8 @@ export function CategoryBreakdown({ categories }: CategoryBreakdownProps) {
                     />
                   ))}
                 </div>
-                <span 
-                  className="tracking-wider min-w-[3rem] text-right" 
+                <span
+                  className="tracking-wider min-w-[3rem] text-right"
                   style={{ fontFamily: 'monospace', color }}
                 >
                   {count} ({percentage}%)
