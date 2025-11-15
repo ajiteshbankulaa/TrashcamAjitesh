@@ -134,6 +134,20 @@ export function Dashboard() {
     }));
   };
 
+  const removeEvent = (trashCanId: string, eventIndex: number) => {
+    setTrashCans(prev => prev.map(can => {
+      if (can.id !== trashCanId) return can;
+
+      const updatedEvents = [...can.events];
+      updatedEvents.splice(eventIndex, 1);
+
+      return {
+        ...can,
+        events: updatedEvents
+      };
+    }));
+  };
+
   const totalCans = trashCans.length;
   const criticalCans = trashCans.filter(can => can.status === "critical").length;
   const warningCans = trashCans.filter(can => can.status === "warning").length;
@@ -172,7 +186,11 @@ export function Dashboard() {
         </div>
         <div className="lg:col-span-1">
           {trashCans.map((trashCan) => (
-            <EventLog key={`events-${trashCan.id}`} events={trashCan.events} />
+            <EventLog
+              key={`events-${trashCan.id}`}
+              events={trashCan.events}
+              onRemoveEvent={(index) => removeEvent(trashCan.id, index)}
+            />
           ))}
         </div>
       </div>
