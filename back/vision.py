@@ -1,7 +1,15 @@
 import cv2
 import time
+from dotenv import load_dotenv
+import os
 
-VIDEO_URL = ""
+
+
+
+
+load_dotenv()
+
+VIDEO_URL = "http://"+os.getenv("PI_IP")+":"+os.getenv("PI_PORT")+"/stream.mjpeg"
 
 def open_stream():
     cap = cv2.VideoCapture(VIDEO_URL, cv2.CAP_FFMPEG)
