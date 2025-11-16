@@ -3,7 +3,7 @@ import { TrashCanCard } from "./TrashCanCard";
 import { StatusBar } from "./StatusBar";
 import { EventLog } from "./EventLog";
 import { Trash2 } from "lucide-react";
-import { getLogs, getFill } from "../api";
+import { getLogs, getFill, getHealth } from "../api";
 
 export type EventType = "deposit" | "empty" | "alert" | "contamination";
 
@@ -72,6 +72,7 @@ export function Dashboard() {
     initialTrashCanData,
   ]);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isOnline, setIsOnline] = useState<boolean>(true);
 
   const processedLogs = useRef<Set<string>>(new Set());
   const primaryTargetCategory = trashCans[0]?.targetCategory;
@@ -90,6 +91,21 @@ export function Dashboard() {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    async function checkHealth() {
+      try {
+        const healthStatus = await getHealth();
+        setIsOnline(healthStatus === "ok");
+      } catch (err) {
+        console.error("Health check failed:", err);
+        setIsOnline(false);
+      }
+    }
+    checkHealth();
+    const healthIntervalId = setInterval(checkHealth, 3000);
+    return () => clearInterval(healthIntervalId);
   }, []);
 
   useEffect(() => {
@@ -118,6 +134,10 @@ export function Dashboard() {
 
   // Load logs & classify as deposit vs contamination based on targetCategory
   useEffect(() => {
+    if (!isOnline) {
+      return;
+    }
+
     async function loadEvents() {
       try {
         const [logsData, fillData] = await Promise.all([
@@ -217,7 +237,7 @@ export function Dashboard() {
     loadEvents();
     const id = setInterval(loadEvents, 2000); // poll logs
     return () => clearInterval(id);
-  }, [primaryTargetCategory]);
+  }, [isOnline, primaryTargetCategory]);
 
   const updateTrashCan = (id: string, updates: Partial<TrashCanData>) => {
     setTrashCans((prev) =>
@@ -314,6 +334,7 @@ export function Dashboard() {
           criticalCans={criticalCans}
           warningCans={warningCans}
           currentTime={currentTime}
+          isOnline={isOnline}
         />
       </div>
 
