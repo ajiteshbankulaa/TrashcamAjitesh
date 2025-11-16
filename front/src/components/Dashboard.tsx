@@ -5,11 +5,7 @@ import { EventLog } from "./EventLog";
 import { Trash2 } from "lucide-react";
 import { getLogs, getFill } from "../api";
 
-export type EventType =
-  | "deposit"
-  | "empty"
-  | "alert"
-  | "contamination";
+export type EventType = "deposit" | "empty" | "alert" | "contamination";
 
 export interface TrashCanData {
   id: string;
@@ -19,7 +15,7 @@ export interface TrashCanData {
   lastEmptied: string; // ISO timestamp
   status: "normal" | "warning" | "critical";
   location: string;
-  targetCategory: "recyclable" | "organic" | "plastic" | "paper" | "general";
+  targetCategory: "recycling" | "trash";
   categories: {
     recyclable: number;
     organic: number;
@@ -37,12 +33,12 @@ export interface TrashCanData {
 const initialTrashCanData: TrashCanData = {
   id: "TC001",
   name: "Main Entrance",
-  fillLevel: 45,
+  fillLevel: 45, // initial only – will be replaced by getFill()
   weight: 12.3,
   lastEmptied: new Date().toISOString(),
   status: "normal",
   location: "Building A",
-  targetCategory: "recyclable",
+  targetCategory: "recycling",
   categories: {
     recyclable: 8,
     organic: 3,
@@ -91,29 +87,32 @@ export function Dashboard() {
         const data = await getLogs();
         const logs = data.logs as BackendLog[];
 
-        const detectionEvents = logs.map((log): TrashCanData["events"][number] => {
-          const ts = log.timestamp;
-          const cls = (log.class || "").toLowerCase();
-          const itemName = log.item || "";
-          const target = primaryTargetCategory?.toLowerCase();
+        const detectionEvents = logs.map(
+          (log): TrashCanData["events"][number] => {
+            const ts = log.timestamp;
+            const cls = (log.class || "").toLowerCase();
+            const itemName = log.item || "";
+            const target = primaryTargetCategory?.toLowerCase();
 
-          const isContamination =
-            !!target && cls && cls !== target;
+            const isContamination = !!target && cls && cls !== target;
 
-          const type: EventType = isContamination
-            ? "contamination"
-            : "deposit";
+            const type: EventType = isContamination
+              ? "contamination"
+              : "deposit";
 
-          const message = isContamination
-            ? `Non-${primaryTargetCategory?.toUpperCase()} item detected (${itemName} – ${cls || "unknown"})`
-            : `${cls || "item"} detected (${itemName})`;
+            const message = isContamination
+              ? `Non-${primaryTargetCategory?.toUpperCase()} item detected (${itemName} – ${
+                  cls || "unknown"
+                })`
+              : `${cls || "item"} detected (${itemName})`;
 
-          return {
-            timestamp: ts,
-            type,
-            message,
-          };
-        });
+            return {
+              timestamp: ts,
+              type,
+              message,
+            };
+          }
+        );
 
         setTrashCans((prev) =>
           prev.map((can, index) => {
@@ -144,8 +143,14 @@ export function Dashboard() {
   useEffect(() => {
     async function pollFill() {
       try {
-        const data = await getFill();
-        const fill = typeof data.fill === "number" ? data.fill : 0;
+        // getFill() returns a NUMBER (fillPercent), not an object
+        const fillPercent = await getFill();
+
+        // be defensive in case something weird comes back
+        const fill =
+          typeof fillPercent === "number"
+            ? fillPercent
+            : Number(fillPercent) || 0;
 
         setTrashCans((prev) =>
           prev.map((can, index) => {
@@ -168,7 +173,7 @@ export function Dashboard() {
               const alertEvent: TrashCanData["events"][number] = {
                 timestamp: timeStr,
                 type: "alert",
-                message: `Fill level reached ${fill}%`,
+                message: `Fill level reached ${Math.round(fill)}%`,
               };
 
               events = [alertEvent, ...events].slice(0, 50);
@@ -325,6 +330,7 @@ export function Dashboard() {
             <EventLog
               key={`events-${trashCan.id}`}
               events={trashCan.events}
+              targetCategory={trashCan.targetCategory}
               onRemoveEvent={(index) => removeEvent(trashCan.id, index)}
             />
           ))}
