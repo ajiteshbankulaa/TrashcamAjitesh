@@ -185,8 +185,6 @@ def process_frame(frame):
 
 
 def main():
-    # clear current.csv
-    open('current.csv', 'w').write("timestamp,location,item,classification\n")
 
     cap = cv2.VideoCapture(VIDEO_URL, cv2.CAP_FFMPEG)
 
