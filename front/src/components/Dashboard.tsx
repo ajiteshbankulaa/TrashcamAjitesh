@@ -201,21 +201,6 @@ export function Dashboard() {
     );
   };
 
-  const resetTrashCan = (id: string) => {
-    setTrashCans((prev) =>
-      prev.map((can) =>
-        can.id === id
-          ? {
-              ...initialTrashCanData,
-              id: can.id,
-              name: can.name,
-              location: can.location,
-            }
-          : can
-      )
-    );
-  };
-
   const emptyTrashCan = (id: string) => {
     setTrashCans((prev) =>
       prev.map((can) => {
@@ -310,7 +295,6 @@ export function Dashboard() {
               key={trashCan.id}
               data={trashCan}
               onUpdate={(updates) => updateTrashCan(trashCan.id, updates)}
-              onReset={() => resetTrashCan(trashCan.id)}
               emptyTrash={() => emptyTrashCan(trashCan.id)}
               currentTime={currentTime}
             />
