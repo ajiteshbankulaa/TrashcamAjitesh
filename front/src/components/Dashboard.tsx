@@ -371,6 +371,7 @@ export function Dashboard() {
               data={trashCan}
               onUpdate={(updates) => updateTrashCan(trashCan.id, updates)}
               emptyTrash={() => emptyTrashCan(trashCan.id)}
+              clearEvents={() => clearAllEvents(trashCan.id)}
               currentTime={currentTime}
             />
           ))}
