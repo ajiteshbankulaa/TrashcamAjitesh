@@ -197,6 +197,9 @@ def main():
     while True:
         ret, frame = cap.read()
 
+        frame = frame+20
+        frame[frame > 255] = 255
+
         if not ret:
             print("Failed to read frame")
             break
