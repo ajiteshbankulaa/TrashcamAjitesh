@@ -34,7 +34,7 @@ model.set_classes(WORLD_CLASSES)
 
 load_dotenv()
 
-VIDEO_URL = "http://129.161.144.78:8080/color"
+VIDEO_URL = "http://129.161.154.21:8080/color"
 # VIDEO_URL = "http://"+str(os.getenv("PI_USER"))+":"+str(os.getenv("PI_PASSWORD"))+"@"+str(os.getenv("PI_IP"))+":"+str(os.getenv("PI_PORT"))+"/?action=stream.mjpeg"
 
 # --------------------------

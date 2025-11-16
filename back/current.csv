@@ -1,17 +1,13 @@
 timestamp,location,item,classification
-1763267103.835186,"(0, 0)",person,compost
-1763267233.752924,"(149, 0)",person,compost
-1763267244.0315406,"(1, 0)",person,compost
-1763267277.115982,"(186, 0)",laptop,trash
-1763267277.1198487,"(187, 0)",battery,trash
-1763267278.930779,"(197, 81)",paper bag,trash
-1763267287.21363,"(110, 143)",laptop,trash
-1763267373.8838794,"(110, 143)",battery,trash
-1763267394.922553,"(110, 143)",paper bag,trash
-1763267668.5915706,"(46, 203)",laptop,trash
-1763268034.3753548,"(254, 0)",person,compost
-1763268037.6110065,"(0, 99)",laptop,trash
-1763268044.4141386,"(1, 0)",person,compost
-1763268054.7136204,"(78, 0)",person,compost
-1763268055.2044604,"(0, 43)",laptop,trash
-1763268065.4672902,"(0, 104)",laptop,trash
+1763300447.004201,"(394, 305)",bottle,recycling
+1763300457.1573012,"(474, 261)",bottle,recycling
+1763300468.350327,"(394, 305)",bottle,recycling
+1763300469.132171,"(394, 305)",cup,recycling
+1763300478.524294,"(473, 260)",bottle,recycling
+1763300479.6123507,"(380, 134)",battery,trash
+1763300488.8684955,"(395, 306)",bottle,recycling
+1763300498.881451,"(474, 260)",bottle,recycling
+1763300509.1453478,"(395, 305)",bottle,recycling
+1763300519.1577587,"(469, 260)",bottle,recycling
+1763300529.5253305,"(395, 305)",bottle,recycling
+1763300539.947166,"(473, 261)",bottle,recycling
