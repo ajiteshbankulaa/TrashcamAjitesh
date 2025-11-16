@@ -34,6 +34,8 @@ The system pipeline is:
   - **Real-time device status**
 - Works stand-alone (backend optional initially)
 
+![TrashCam Demo](res/frontend-usage.png "TrashCam System Photo")
+
 ###  LED Feedback (Raspberry Pi)  
 - WS2812B or Neopixel LEDs  
 - Visual feedback for:
