@@ -99,7 +99,7 @@ export function Dashboard() {
     async function checkHealth() {
       try {
         const healthStatus = await getHealth();
-        setIsOnline(healthStatus === "ok");
+        setIsOnline(healthStatus.status === "ok");
       } catch (err) {
         console.error("Health check failed:", err);
         setIsOnline(false);
