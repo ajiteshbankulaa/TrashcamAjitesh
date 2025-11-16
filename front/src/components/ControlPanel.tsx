@@ -25,6 +25,7 @@ interface ControlPanelProps {
   data: TrashCanData;
   onUpdate: (updates: Partial<TrashCanData>) => void;
   currentTime: Date;
+  emptyTrash: () => void; // ⬅️ added
 }
 
 export function ControlPanel({
@@ -42,7 +43,10 @@ export function ControlPanel({
   }, [data, isOpen]);
 
   const handleSave = () => {
-    const total = Object.values(data.categories).reduce((sum, count) => sum + count, 0);
+    const total = Object.values(data.categories).reduce(
+      (sum, count) => sum + count,
+      0
+    );
     const calculatedWeight = Math.min(25, total * 0.5);
     const updates = {
       ...editedData,
@@ -91,6 +95,9 @@ export function ControlPanel({
       console.error("Failed to clear backend data:", err);
     }
     emptyTrash(); // update local UI + add "Trash can emptied" event
+
+    // ⬇️ force full page refresh after emptying
+    window.location.reload();
   };
 
   return (
@@ -116,7 +123,9 @@ export function ControlPanel({
           <Select
             value={data.targetCategory}
             onValueChange={(value) =>
-              onUpdate({ targetCategory: value as "recyclable" | "organic" | "general" })
+              onUpdate({
+                targetCategory: value as "recyclable" | "organic" | "general",
+              })
             }
           >
             <SelectTrigger
@@ -285,7 +294,8 @@ export function ControlPanel({
                     <div key={key}>
                       <Label
                         className="text-[#50d070]/70 tracking-wide mb-2 block"
-                        style={{ fontFamily: "monospace" }}>
+                        style={{ fontFamily: "monospace" }}
+                      >
                         {label}:
                       </Label>
                       <Input

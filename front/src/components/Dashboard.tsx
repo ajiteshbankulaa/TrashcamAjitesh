@@ -3,7 +3,7 @@ import { TrashCanCard } from "./TrashCanCard";
 import { StatusBar } from "./StatusBar";
 import { EventLog } from "./EventLog";
 import { Trash2 } from "lucide-react";
-import { getLogs, getFill } from "../api";
+import { getLogs, getFill, getHealth } from "../api";
 
 export type EventType = "deposit" | "empty" | "alert" | "contamination";
 
@@ -47,17 +47,19 @@ const initialTrashCanData: TrashCanData = {
 };
 
 interface BackendLog {
-  timestamp: string;
+  timestamp: number;
+  location: string;
   item: string;
-  class: string;
+  classification: string;
 }
 
 // Simple classification function for 3-category system
-const classifyItem = (cls: string): "recyclable" | "organic" | "general" => {
+const classifyItem = (cls: string | undefined): "recyclable" | "organic" | "general" => {
+  if (!cls) return "general";
   const c = cls.toLowerCase();
   if (c.includes("plastic") || c.includes("paper") || c.includes("cardboard") ||
       c.includes("metal") || c.includes("glass") || c.includes("can") ||
-      c.includes("aluminum")) {
+      c.includes("aluminum") || c.includes("recyclable")) {
     return "recyclable";
   } else if (c.includes("organic") || c.includes("compost") || c.includes("food") ||
              c.includes("biodegradable") || c.includes("fruit") || c.includes("vegetable")) {
@@ -72,6 +74,7 @@ export function Dashboard() {
     initialTrashCanData,
   ]);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isOnline, setIsOnline] = useState<boolean>(true);
 
   const processedLogs = useRef<Set<string>>(new Set());
   const primaryTargetCategory = trashCans[0]?.targetCategory;
@@ -90,6 +93,21 @@ export function Dashboard() {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    async function checkHealth() {
+      try {
+        const healthStatus = await getHealth();
+        setIsOnline(healthStatus.status === "ok");
+      } catch (err) {
+        console.error("Health check failed:", err);
+        setIsOnline(false);
+      }
+    }
+    checkHealth();
+    const healthIntervalId = setInterval(checkHealth, 3000);
+    return () => clearInterval(healthIntervalId);
   }, []);
 
   useEffect(() => {
@@ -118,6 +136,10 @@ export function Dashboard() {
 
   // Load logs & classify as deposit vs contamination based on targetCategory
   useEffect(() => {
+    if (!isOnline) {
+      return;
+    }
+
     async function loadEvents() {
       try {
         const [logsData, fillData] = await Promise.all([
@@ -131,6 +153,7 @@ export function Dashboard() {
           }),
         ]);
         const logs = logsData.logs as BackendLog[];
+        console.log(logsData);
         const fill = fillData;
         setTrashCans((prev) =>
           prev.map((can, index) => {
@@ -143,7 +166,7 @@ export function Dashboard() {
 
             // Process each log to update categories and create events
             logs.forEach((log) => {
-              const logSignature = `${log.timestamp}-${log.item}-${log.class}`;
+              const logSignature = `${log.timestamp}-${log.item}-${log.classification}`;
               // Skip if we've already processed this log
               if (processedLogs.current.has(logSignature)) {
                 return;
@@ -152,21 +175,28 @@ export function Dashboard() {
               processedLogs.current.add(logSignature);
               hasNewItems = true;
 
-              const detectedCategory = classifyItem(log.class);
+              const detectedCategory = classifyItem(log.classification);
               const isContamination = detectedCategory !== can.targetCategory;
 
               // update the category counter
               updatedCategories[detectedCategory] += 1;
               changes += 1;
 
+              const eventTime = new Date(log.timestamp * 1000).toLocaleTimeString("en-US", {
+                hour12: false,
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              });
+
               // create event
               const eventType: EventType = isContamination ? "contamination" : "deposit";
               const message = isContamination
-                ? `Non-${can.targetCategory.toUpperCase()}: ${detectedCategory} (${log.item} – ${log.class || "unknown"})`
-                : `${log.class || "item"} detected (${log.item})`;
+                ? `Non-${can.targetCategory.toUpperCase()}: ${detectedCategory} (${log.item} – ${log.classification || "unknown"})`
+                : `${log.classification || "item"} detected (${log.item})`;
 
               newEvents.push({
-                timestamp: log.timestamp,
+                timestamp: eventTime,
                 type: eventType,
                 category: detectedCategory,
                 message,
@@ -217,7 +247,7 @@ export function Dashboard() {
     loadEvents();
     const id = setInterval(loadEvents, 2000); // poll logs
     return () => clearInterval(id);
-  }, [primaryTargetCategory]);
+  }, [isOnline, primaryTargetCategory]);
 
   const updateTrashCan = (id: string, updates: Partial<TrashCanData>) => {
     setTrashCans((prev) =>
@@ -269,6 +299,18 @@ export function Dashboard() {
     );
   };
 
+  const clearAllEvents = (trashCanId: string) => {
+    setTrashCans((prev) =>
+      prev.map((can) => {
+        if (can.id !== trashCanId) return can;
+        return {
+          ...can,
+          events: [],
+        };
+      })
+    );
+  };
+
   const removeEvent = (trashCanId: string, eventIndex: number) => {
     setTrashCans((prev) =>
       prev.map((can) => {
@@ -314,6 +356,7 @@ export function Dashboard() {
           criticalCans={criticalCans}
           warningCans={warningCans}
           currentTime={currentTime}
+          isOnline={isOnline}
         />
       </div>
 
@@ -337,6 +380,7 @@ export function Dashboard() {
               events={trashCan.events}
               targetCategory={trashCan.targetCategory}
               onRemoveEvent={(index) => removeEvent(trashCan.id, index)}
+              onClearAll={() => clearAllEvents(trashCan.id)}
             />
           ))}
         </div>
