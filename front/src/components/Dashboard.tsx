@@ -38,7 +38,7 @@ const initialTrashCanData: TrashCanData = {
   lastEmptied: new Date().toISOString(),
   status: "normal",
   location: "Building A",
-  targetCategory: "recycling",
+  targetCategory: "recyclable",
   categories: {
     recyclable: 0,
     organic: 0,
@@ -153,13 +153,10 @@ export function Dashboard() {
             const newFillLevel = calculateFillLevel(updatedCategories);
             const newStatus = calculateStatus(newFillLevel);
 
-            // keep manual events and add new detection events
-            const manualEvents = can.events.filter(
-              (e) => e.type === "empty" || e.type === "alert"
-            );
+            const existingEvents = [...can.events];
 
             // check if we need to add a fill level alert
-            let finalEvents = [...manualEvents, ...newEvents];
+            let finalEvents = [...newEvents, ...existingEvents];
             const prevFill = can.fillLevel;
 
             if (newFillLevel >= 80 && prevFill < 80) {

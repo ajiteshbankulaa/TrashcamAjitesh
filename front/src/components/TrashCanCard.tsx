@@ -106,7 +106,7 @@ export function TrashCanCard({ data, onUpdate, emptyTrash, currentTime }: TrashC
           <div className="flex items-center gap-2 mb-1">
             <Weight className="w-4 h-4 text-[#50d070]" />
             <span className="text-[#50d070]/70 tracking-wide" style={{ fontFamily: 'monospace' }}>
-              WEIGHT
+              WEIGHT ESTIMATE
             </span>
           </div>
           <p className="text-[#50d070] tracking-wider" style={{ fontFamily: 'monospace' }}>
